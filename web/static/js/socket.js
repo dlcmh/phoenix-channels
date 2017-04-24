@@ -66,7 +66,7 @@ let chatInput = document.querySelector('#chat-input')
 let messageContainer = document.querySelector('#messages')
 
 chatInput.addEventListener('keypress', event => {
-  if (event.keyCode === 13) {
+  if (event.keyCode === 13 && chatInput.value.length > 0) {
     channel.push('new_msg', {body: chatInput.value}) // event is named 'new_msg'
     chatInput.value = ''
   }
