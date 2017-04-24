@@ -62,20 +62,39 @@ let channel = socket.channel("room:lobby", {})
  */
 
 // listen for enter keypress
+let nameIsAssigned = false
+let username = null
+let messageItem = document.createElement('li')
 let chatInput = document.querySelector('#chat-input')
 let messageContainer = document.querySelector('#messages')
 
 chatInput.addEventListener('keypress', event => {
+  if (event.keyCode === 13 && chatInput.value.length > 0 && !nameIsAssigned) {
+    channel.push('new_user', {body: chatInput.value}) // event is named 'new_user'
+    username = chatInput.value
+    nameIsAssigned = true
+    chatInput.value = ''
+    return
+  }
   if (event.keyCode === 13 && chatInput.value.length > 0) {
     channel.push('new_msg', {body: chatInput.value}) // event is named 'new_msg'
     chatInput.value = ''
   }
 })
 
+// listen for acknowledgement of successful user_join
+channel.on('new_user', payload => {
+  // let messageItem = document.createElement('li')
+  messageItem.style.cssText = `color:${payload.body}`
+  // messageItem.innerText = `[${Date()}] ${payload.body}`
+  // messageItem.innerText = `[${Date()}] ${payload.body}`
+  // messageContainer.appendChild(messageItem)
+})
+
 // listen for arrival of new messages and append to container
 channel.on('new_msg', payload => {
-  let messageItem = document.createElement('li')
-  messageItem.innerText = `[${Date()}] ${payload.body}`
+  // let messageItem = document.createElement('li')
+  messageItem.innerText = `[${username}] ${payload.body}`
   messageContainer.appendChild(messageItem)
 })
 /* End: Event Listeners */
