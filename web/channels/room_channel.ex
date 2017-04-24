@@ -2,6 +2,7 @@ defmodule PhoenixChannels.RoomChannel do
   use Phoenix.Channel
 
   def join("room:lobby", _message, socket) do
+    IO.puts "join/3 for room:lobby called"
     {:ok, socket}
   end
 
@@ -12,9 +13,15 @@ defmodule PhoenixChannels.RoomChannel do
   # notifies all joined clients on this `socket`'s topic and invoke their
   # `handle_out/3` callbacks
   def handle_in("new_msg", %{"body" => body}, socket) do
+    IO.puts "handle_in/3 called"
     broadcast! socket, "new_msg", %{body: body}
     {:noreply, socket}
   end
+
+  # web/channels/room_channel.ex:28: [warning] An intercept for event "new_msg"
+  # has not yet been defined in Elixir.PhoenixChannels.RoomChannel.handle_out/3.
+  # Add "new_msg" to your list of intercepted events with intercept/1
+  intercept ["new_msg"]
 
   # handle_out/3 isn't a required callback, but it allows us to
   # customize and filter broadcasts before they reach each client.
@@ -23,6 +30,7 @@ defmodule PhoenixChannels.RoomChannel do
   # We included it here because hooking into outgoing events allows for
   # powerful message customization and filtering.
   def handle_out("new_msg", payload, socket) do
+    IO.puts "handle_out/3 called"
     push socket, "new_msg", payload
     {:noreply, socket}
   end
