@@ -14,6 +14,7 @@ defmodule PhoenixChannels do
       supervisor(PhoenixChannels.Endpoint, []),
       # Start your own worker by calling: PhoenixChannels.Worker.start_link(arg1, arg2, arg3)
       # worker(PhoenixChannels.Worker, [arg1, arg2, arg3]),
+      worker(PhoenixChannels.Tracker, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -1,5 +1,6 @@
 defmodule PhoenixChannels.RoomChannel do
   use Phoenix.Channel
+  alias PhoenixChannels.Tracker, as: Tracker
 
   def join("room:lobby", _message, socket) do
     IO.puts "join/3 for room:lobby called"
@@ -15,6 +16,8 @@ defmodule PhoenixChannels.RoomChannel do
   def handle_in("new_msg", %{"body" => body}, socket) do
     IO.puts "handle_in/3 called"
     broadcast! socket, "new_msg", %{body: body}
+    Tracker.add(user: nil, message: body)
+    IO.inspect Tracker.all
     {:noreply, socket}
   end
 
