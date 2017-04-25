@@ -4,7 +4,7 @@ defmodule PhoenixChannels.RoomChannel do
 
   def join("room:lobby", _message, socket) do
     # IO.puts "join/3 for room:lobby called"
-    # send(self(), :after_join) # calls `handle_info(:after_join, socket)`
+    send(self(), :after_join) # calls `handle_info(:after_join, socket)`
     {:ok, socket}
   end
 
@@ -13,11 +13,10 @@ defmodule PhoenixChannels.RoomChannel do
   end
 
   # called by `send` in `join("room:lobby", _message, socket)`
-  # def handle_info(:after_join, socket) do
-    # push socket, "feed", %{list: feed_items(socket)}
-    # push socket, "user_joined", %{user_joined: "!!!!"} # message must be a Map
-    # {:noreply, socket}
-  # end
+  def handle_info(:after_join, socket) do
+    push socket, "join", %{status: "connected"} # message must be a Map
+    {:noreply, socket}
+  end
 
   def handle_in("new_user", %{"username" => username}, socket) do
     push(
