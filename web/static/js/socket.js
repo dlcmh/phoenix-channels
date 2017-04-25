@@ -81,7 +81,7 @@ chatInput.addEventListener('keypress', event => {
       'new_msg', {
         username: username,
         usernameColor: usernameColor,
-        body: chatInput.value
+        message: chatInput.value
       }
     ) // event is named 'new_msg'
     chatInput.value = ''
@@ -90,7 +90,18 @@ chatInput.addEventListener('keypress', event => {
 
 // listen for acknowledgement of successful user_join
 channel.on('new_user', payload => {
+  console.log(JSON.stringify(payload))
+  console.log(payload.history.lol)
   usernameColor = payload.body
+  for (let chat of payload.history) {
+    let userEl = document.createElement('span')
+    userEl.style.color = chat.usernameColor
+    userEl.appendChild(document.createTextNode(chat.username))
+    let msgEl = document.createElement('li')
+    msgEl.appendChild(userEl)
+    msgEl.appendChild(document.createTextNode(": " + chat.message))
+    messageContainer.appendChild(msgEl)
+  }
 })
 
 // listen for arrival of new messages and append to container
@@ -100,7 +111,7 @@ channel.on('new_msg', payload => {
   userEl.appendChild(document.createTextNode(payload.username))
   let msgEl = document.createElement('li')
   msgEl.appendChild(userEl)
-  msgEl.appendChild(document.createTextNode(": " + payload.body))
+  msgEl.appendChild(document.createTextNode(": " + payload.message))
   messageContainer.appendChild(msgEl)
 })
 /* End: Event Listeners */

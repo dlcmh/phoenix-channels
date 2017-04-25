@@ -19,10 +19,10 @@ defmodule PhoenixChannels.Tracker do
   end
 
   @doc """
-  Adds `[user: "user1", message: "a message"]` `kwlist` to the head of the list.
+  Adds `[user: "user1", message: "a message"]` `map` to the head of the list.
   """
-  def add(kwlist) do
+  def add(map) do
     IO.puts "PhoenixChannels.Tracker add/1 called"
-    Agent.update(__MODULE__, fn(list) -> [kwlist | list] end)
+    Agent.update(__MODULE__, fn(list) -> [map | list] end)
   end
 end

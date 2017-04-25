@@ -28,13 +28,13 @@ defmodule PhoenixChannels.RoomChannel do
   # `handle_out/3` callbacks
   def handle_in("new_msg", %{"username" => username,
                              "usernameColor" => usernameColor,
-                             "body" => body},
+                             "message" => message},
                            socket) do
     # IO.puts "handle_in/3 called"
     broadcast! socket, "new_msg", %{username: username,
                                     usernameColor: usernameColor,
-                                    body: body}
-    Tracker.add(username: username, usernameColor: usernameColor, message: body)
+                                    message: message}
+    Tracker.add(%{username: username, usernameColor: usernameColor, message: message})
     IO.inspect Tracker.all
     {:noreply, socket}
   end
