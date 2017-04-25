@@ -34,7 +34,7 @@ defmodule PhoenixChannels.RoomChannel do
                              "message" => message},
                            socket) do
     # IO.puts "handle_in/3 called"
-    usec_ts = System.system_time(:microsecond)
+    usec_ts = System.system_time(:microseconds)
     chat = %{username: username, usernameColor: usernameColor,
              message: message, datetimestring: datetimestring(usec_ts),
              timestamp: usec_ts}
@@ -72,7 +72,7 @@ defmodule PhoenixChannels.RoomChannel do
 
   def datetimestring(usec_ts) do
     usec_ts
-      |> DateTime.from_unix!(:microsecond)
+      |> DateTime.from_unix!(:microseconds)
       |> DateTime.to_iso8601
   end
 end
