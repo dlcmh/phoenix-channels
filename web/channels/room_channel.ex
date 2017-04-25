@@ -3,7 +3,7 @@ defmodule PhoenixChannels.RoomChannel do
   alias PhoenixChannels.Tracker, as: Tracker
 
   def join("room:lobby", _message, socket) do
-    IO.puts "join/3 for room:lobby called"
+    # IO.puts "join/3 for room:lobby called"
     # send(self(), :after_join) # calls `handle_info(:after_join, socket)`
     {:ok, socket}
   end
@@ -19,17 +19,22 @@ defmodule PhoenixChannels.RoomChannel do
     # {:noreply, socket}
   # end
 
-  def handle_in("new_user", %{"body" => body}, socket) do
-    push socket, "new_user", %{body: "red"}
+  def handle_in("new_user", %{"body" => _}, socket) do
+    push socket, "new_user", %{body: generate_color(), history: Tracker.all}
     {:noreply, socket}
   end
 
   # notifies all joined clients on this `socket`'s topic and invoke their
   # `handle_out/3` callbacks
-  def handle_in("new_msg", %{"body" => body}, socket) do
-    IO.puts "handle_in/3 called"
-    broadcast! socket, "new_msg", %{body: body}
-    Tracker.add(user: nil, message: body)
+  def handle_in("new_msg", %{"username" => username,
+                             "usernameColor" => usernameColor,
+                             "body" => body},
+                           socket) do
+    # IO.puts "handle_in/3 called"
+    broadcast! socket, "new_msg", %{username: username,
+                                    usernameColor: usernameColor,
+                                    body: body}
+    Tracker.add(username: username, usernameColor: usernameColor, message: body)
     IO.inspect Tracker.all
     {:noreply, socket}
   end
@@ -50,4 +55,13 @@ defmodule PhoenixChannels.RoomChannel do
   #   push socket, "new_msg", payload
   #   {:noreply, socket}
   # end
+
+  def generate_color do
+    v = "0123456789ABCDEF"
+    c = String.codepoints(v)
+    r = 1..6
+    |> Enum.map(fn _ -> Enum.random(c) end)
+    |> Enum.join
+    "#" <> r
+  end
 end
