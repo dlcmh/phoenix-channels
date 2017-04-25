@@ -19,8 +19,8 @@ defmodule PhoenixChannels.RoomChannel do
     # {:noreply, socket}
   # end
 
-  def handle_in("new_user", %{"body" => _}, socket) do
-    push socket, "new_user", %{body: generate_color(), history: Tracker.all}
+  def handle_in("new_user", %{"username" => username}, socket) do
+    push socket, "new_user", %{username: username,color: generate_color(), history: Tracker.all}
     {:noreply, socket}
   end
 

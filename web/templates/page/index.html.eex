@@ -1,2 +1,2 @@
 <div id="messages"></div>
-<input id="chat-input" type="text">
+<span id="chat-username"></span>&nbsp;<input id="chat-input" type="text" placeholder="Enter your name">

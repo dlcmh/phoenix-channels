@@ -64,16 +64,18 @@ let channel = socket.channel("room:lobby", {})
 let nameIsAssigned = false
 let username = ""
 let usernameColor = ""
+const chatUsername = document.querySelector('#chat-username')
 const chatInput = document.querySelector('#chat-input')
 const messageContainer = document.querySelector('#messages')
 
 // listen for enter keypress
 chatInput.addEventListener('keypress', event => {
   if (event.keyCode === 13 && chatInput.value.length > 0 && !nameIsAssigned) {
-    channel.push('new_user', {body: chatInput.value}) // event is named 'new_user'
+    channel.push('new_user', {username: chatInput.value}) // event is named 'new_user'
     username = chatInput.value
     nameIsAssigned = true
     chatInput.value = ''
+    chatInput.placeholder = "Enter message"
     return
   }
   if (event.keyCode === 13 && chatInput.value.length > 0) {
@@ -85,19 +87,22 @@ chatInput.addEventListener('keypress', event => {
       }
     ) // event is named 'new_msg'
     chatInput.value = ''
+    chatInput.placeholder = "Enter message"
   }
 })
 
 // listen for acknowledgement of successful user_join
 channel.on('new_user', payload => {
   console.log(JSON.stringify(payload))
-  console.log(payload.history.lol)
-  usernameColor = payload.body
+  usernameColor = payload.color
+  chatUsername.style.color = usernameColor
+  chatUsername.appendChild(document.createTextNode(payload.username))
   for (let chat of payload.history) {
     let userEl = document.createElement('span')
     userEl.style.color = chat.usernameColor
     userEl.appendChild(document.createTextNode(chat.username))
     let msgEl = document.createElement('li')
+    msgEl.style.listStyleType = "none"
     msgEl.appendChild(userEl)
     msgEl.appendChild(document.createTextNode(": " + chat.message))
     messageContainer.appendChild(msgEl)
@@ -110,6 +115,7 @@ channel.on('new_msg', payload => {
   userEl.style.color = payload.usernameColor
   userEl.appendChild(document.createTextNode(payload.username))
   let msgEl = document.createElement('li')
+  msgEl.style.listStyleType = "none"
   msgEl.appendChild(userEl)
   msgEl.appendChild(document.createTextNode(": " + payload.message))
   messageContainer.appendChild(msgEl)
