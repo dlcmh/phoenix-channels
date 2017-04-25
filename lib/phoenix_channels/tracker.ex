@@ -15,7 +15,11 @@ defmodule PhoenixChannels.Tracker do
   List all entries.
   """
   def all do
-    Agent.get(__MODULE__, fn(list) -> list end)
+    Agent.get(__MODULE__,
+      fn(list) ->
+        list |> Enum.sort_by(fn map -> map[:timestamp] end, &<=/2)
+      end
+    )
   end
 
   @doc """

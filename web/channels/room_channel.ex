@@ -20,7 +20,10 @@ defmodule PhoenixChannels.RoomChannel do
   # end
 
   def handle_in("new_user", %{"username" => username}, socket) do
-    push socket, "new_user", %{username: username,color: generate_color(), history: Tracker.all}
+    push(
+      socket, "new_user",
+      %{username: username, color: generate_color(), history: Tracker.all}
+    )
     {:noreply, socket}
   end
 
@@ -31,10 +34,12 @@ defmodule PhoenixChannels.RoomChannel do
                              "message" => message},
                            socket) do
     # IO.puts "handle_in/3 called"
-    broadcast! socket, "new_msg", %{username: username,
-                                    usernameColor: usernameColor,
-                                    message: message}
-    Tracker.add(%{username: username, usernameColor: usernameColor, message: message})
+    usec_ts = System.system_time(:microsecond)
+    chat = %{username: username, usernameColor: usernameColor,
+             message: message, datetimestring: datetimestring(usec_ts),
+             timestamp: usec_ts}
+    broadcast! socket, "new_msg", chat
+    Tracker.add(chat)
     IO.inspect Tracker.all
     {:noreply, socket}
   end
@@ -63,5 +68,11 @@ defmodule PhoenixChannels.RoomChannel do
     |> Enum.map(fn _ -> Enum.random(c) end)
     |> Enum.join
     "#" <> r
+  end
+
+  def datetimestring(usec_ts) do
+    usec_ts
+      |> DateTime.from_unix!(:microsecond)
+      |> DateTime.to_iso8601
   end
 end

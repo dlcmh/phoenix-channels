@@ -91,34 +91,51 @@ chatInput.addEventListener('keypress', event => {
   }
 })
 
+function constructChatMessageHTML(chat) {
+  let userEl = document.createElement('span')
+  userEl.style.color = chat.usernameColor
+  userEl.appendChild(document.createTextNode(chat.username))
+  let datetimestringEl = document.createElement('span')
+  datetimestringEl.style.color = "lightgray"
+  datetimestringEl.appendChild(document.createTextNode(` (${chat.datetimestring})`))
+  let msgEl = document.createElement('li')
+  msgEl.style.listStyleType = "none"
+  msgEl.appendChild(userEl)
+  msgEl.appendChild(datetimestringEl)
+  msgEl.appendChild(document.createTextNode(": " + chat.message))
+  messageContainer.appendChild(msgEl)
+}
+
 // listen for acknowledgement of successful user_join
 channel.on('new_user', payload => {
-  console.log(JSON.stringify(payload))
+  // console.log(JSON.stringify(payload))
   usernameColor = payload.color
   chatUsername.style.color = usernameColor
   chatUsername.appendChild(document.createTextNode(payload.username))
   for (let chat of payload.history) {
-    let userEl = document.createElement('span')
-    userEl.style.color = chat.usernameColor
-    userEl.appendChild(document.createTextNode(chat.username))
-    let msgEl = document.createElement('li')
-    msgEl.style.listStyleType = "none"
-    msgEl.appendChild(userEl)
-    msgEl.appendChild(document.createTextNode(": " + chat.message))
-    messageContainer.appendChild(msgEl)
+    // let userEl = document.createElement('span')
+    // userEl.style.color = chat.usernameColor
+    // userEl.appendChild(document.createTextNode(chat.username))
+    // let msgEl = document.createElement('li')
+    // msgEl.style.listStyleType = "none"
+    // msgEl.appendChild(userEl)
+    // msgEl.appendChild(document.createTextNode(": " + chat.message))
+    // messageContainer.appendChild(msgEl)
+    constructChatMessageHTML(chat)
   }
 })
 
 // listen for arrival of new messages and append to container
-channel.on('new_msg', payload => {
-  let userEl = document.createElement('span')
-  userEl.style.color = payload.usernameColor
-  userEl.appendChild(document.createTextNode(payload.username))
-  let msgEl = document.createElement('li')
-  msgEl.style.listStyleType = "none"
-  msgEl.appendChild(userEl)
-  msgEl.appendChild(document.createTextNode(": " + payload.message))
-  messageContainer.appendChild(msgEl)
+channel.on('new_msg', chat => {
+  // let userEl = document.createElement('span')
+  // userEl.style.color = chat.usernameColor
+  // userEl.appendChild(document.createTextNode(chat.username))
+  // let msgEl = document.createElement('li')
+  // msgEl.style.listStyleType = "none"
+  // msgEl.appendChild(userEl)
+  // msgEl.appendChild(document.createTextNode(": " + chat.message))
+  // messageContainer.appendChild(msgEl)
+  constructChatMessageHTML(chat)
 })
 /* End: Event Listeners */
 
